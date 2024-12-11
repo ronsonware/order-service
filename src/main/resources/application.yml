@@ -1,0 +1,41 @@
+spring:
+  application:
+      name: order-service
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: order-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    listener:
+      missing-topics-fatal: false
+      ack-mode: manual_immediate
+    retries:
+      max-attempts: 3
+      backoff:
+        initial-interval: 1000
+        max-interval: 10000
+        multiplier: 2
+    dead-letter-publish:
+      enabled: true
+      topic: orders-dlq
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order-service
+    username: order
+    password: root
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: none
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+    flyway:
+      enabled: true
+      locations: classpath:db/migration
+
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    org.flywaydb.core.internal.database: DEBUG
+    org.flywaydb.core: DEBUG
